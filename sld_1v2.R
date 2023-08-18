@@ -21,7 +21,6 @@ library(ggiraph)
 library(stringr)
 library(igraph)
 
-
 precision=100
 cable_sizes<-c('12F','24F','48F','96F','144F','288F','1F','4F','8F','60F')
 placements<-c('UG','OH','UG/OH')
