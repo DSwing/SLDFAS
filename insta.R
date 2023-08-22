@@ -1,3 +1,7 @@
+install.Rtools(check = TRUE, check_r_update = TRUE, GUI = TRUE, ...)
+install.packages("rstudioapi")
+install.packages("renv")
+
 # set working directory so I know where the .zip file will be located
 dir.create("sld_fas_repo_dir")
 setwd(dir = "sld_fas_repo_dir")
@@ -17,6 +21,10 @@ unzip(zipfile = "sld_fas.zip")
 setwd(dir = "SLDFAS-master")
 
 openProject(path = "sld-fas.Rproj")
+
 renv::restore()
 
 install.packages("arcgisbinding_1.0.1.300.zip", repos=NULL)
+install.packages("svglite")
+
+renv::snapshot()

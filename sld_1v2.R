@@ -34,14 +34,15 @@ REEL_LENGTH <- 3500
 
 
 # # # # # # # # #### to be launched from Rstudio
-args <- c()
-args[1] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/Hazel_Flimby_CLD_V1_VO_WFL1/FeatureServer\\1'
-args[2] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/Hazel_Flimby_CLD_V1_VO_WFL1/FeatureServer\\0'
-args[3] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/Hazel_Flimby_CLD_V1_VO_WFL1/FeatureServer\\6'#cables
-args[4] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/Hazel_Flimby_CLD_V1_VO_WFL1/FeatureServer\\2'#splice_closures
-args[5] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\MyProject16\\GTN.gdb\\Hazel_Flimby_C_ExportFeature'#boundaries
-args[6] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\QC reports\\Flimby\\Flimby20230818'
-args[7] <- 'True'
+# args <- c()
+# args[1] <- ''
+# args[2] <- 'https://services9.arcgis.com/arW8CTVUZbXZBFD9/arcgis/rest/services/DAF_ASP_Full_OLT_LLD/FeatureServer\\12'
+# args[3] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\DAFFODILL_OLT06\\DAFFODILL_OLT06.gdb\\OLT06_cables'#cables
+# args[4] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\DAFFODILL_OLT06\\DAFFODILL_OLT06.gdb\\OLT06closures'#splice_closures
+# args[5] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\DAFFODILL_OLT06\\DAFFODILL_OLT06.gdb\\OLT06_bounds'#boundaries
+# args[6] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\QC reports\\OLT06_fibrus\\20230822'
+# args[7] <- 'False'#is it a urban project?
+
 
 # # # ####
 # args <- c()
@@ -839,8 +840,8 @@ dp$bound <- sapply(dp$geom, (\(x) min_boundary(x,boundary_layer=boundaries_fas))
 
 drops <- cables_fas |> filter(cab_size=='7')
 connected_ix <- c(unique(unlist(sf::st_is_within_distance(lwgeom::st_startpoint(drops),dp,dist=0.1))),unique(unlist(sf::st_is_within_distance(lwgeom::st_endpoint(drops),dp,dist=0.1))))
+dp$connected <- FALSE
 dp$connected[connected_ix] <- TRUE
-dp$connected[!connected_ix] <- FALSE
 #  drops <- cables_fas |> filter(cab_size=='7') |> mutate(ref1= sub("/", ' out:',ref)) |> (\(x) data.frame(from=x$ref1, to=as.character(round(as.numeric(x$prem_id)))))()
 
 
@@ -1108,4 +1109,5 @@ plot_dev <- function(dev_name, w=1, h=2, hazel=FALSE){
 }
 
 walk(unique(devices$name) %>% (\(x) x[!grepl('other map', x)]), (\(k) try(plot_dev(k, hazel=hazel))))
-#plot_dev("FLM-1-JN05", hazel=TRUE)
+#plot_dev("ASP-1-JN11-MPT02", hazel=FALSE)
+
