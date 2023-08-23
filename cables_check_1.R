@@ -1,4 +1,5 @@
 args <- commandArgs(trailingOnly = TRUE)
+renv::activate()
 
 library(arcgisbinding)
 arc.check_product()
