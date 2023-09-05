@@ -1,6 +1,6 @@
 install.Rtools(check = TRUE, check_r_update = TRUE, GUI = TRUE, ...)
 install.packages("rstudioapi")
-install.packages("renv")
+#install.packages("renv")
 
 # set working directory so I know where the .zip file will be located
 dir.create("sld_fas_repo_dir")
