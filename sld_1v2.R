@@ -35,25 +35,26 @@ REEL_LENGTH <- 3500
 
 
 # # # # # # # # #### to be launched from Rstudio
-# args <- c()
-# args[1] <- ''
-# args[2] <- 'https://services9.arcgis.com/arW8CTVUZbXZBFD9/arcgis/rest/services/DAF_ASP_Full_OLT_LLD/FeatureServer\\12'
-# args[3] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\DAFFODILL_OLT06\\DAFFODILL_OLT06.gdb\\OLT06_cables'#cables
-# args[4] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\DAFFODILL_OLT06\\DAFFODILL_OLT06.gdb\\OLT06closures'#splice_closures
-# args[5] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\DAFFODILL_OLT06\\DAFFODILL_OLT06.gdb\\OLT06_bounds'#boundaries
-# args[6] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\QC reports\\OLT06_fibrus\\20230822'
-# args[7] <- 'False'#is it a urban project?
+ args <- c()
+ args[1] <- ''
+ args[2] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/HAZ_Haverigg_Grey_Premises/FeatureServer\\113'
+ args[3] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\MyProject16\\OLT42.gdb\\HAZ_Haverigg_Feeder_Ca_Merge'#cables
+ args[4] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/HAZ_Haverigg_Splice_Closures/FeatureServer\\0'#splice_closures
+ args[5] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/HAZ_Haverigg_Existing_Boundaries/FeatureServer\\86'#boundaries
+ args[6] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\QC reports\\Haverigg'
+ args[7] <- 'False'#is it a urban project?
 
 
 # # # ####
 # args <- c()
-# args[1] <- ''
-# args[2] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\MyProject16\\GTN.gdb\\Premises_Merge'
-# args[3] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\MyProject16\\GTN.gdb\\CableMerge'#cables
-# args[4] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\MyProject16\\GTN.gdb\\MPT_merge'#splice_closures
-# args[5] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\MyProject16\\GTN.gdb\\Aboundaries'#boundaries
-# args[6] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\QC reports\\GCN\\GCN-20230814'
-# # # #   ### to be launched from Rstudio
+# args[1] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/Hazel_Flimby_CLD_V1_VO_WFL1/FeatureServer\\1'
+# args[2] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/Hazel_Flimby_CLD_V1_VO_WFL1/FeatureServer\\0'
+# args[3] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/Hazel_Flimby_CLD_V1_VO_WFL1/FeatureServer\\6'#cables
+# args[4] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/Hazel_Flimby_CLD_V1_VO_WFL1/FeatureServer\\2'#splice_closures
+# args[5] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/Hazel_Flimby_CLD_V1_VO_WFL1/FeatureServer\\7'#boundaries
+# args[6] <- 'C:\\Users\\DomenicoGuadalupi\\OneDrive - Viberoptix\\Documents\\ArcGIS\\Projects\\QC reports\\HAZEL-Flimby\\Flimby-20230824'
+# args[7] <- 'True'#is it a urban project?
+# # # # #   ### to be launched from Rstudio
 # in_params <- c()
 # args[2] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/DAF_OLT27_CLD_VO/FeatureServer\\4'#greys
 # args[1] <- 'https://services8.arcgis.com/8nY6VQZZM2Z9cUt0/arcgis/rest/services/DAF_OLT27_CLD_VO/FeatureServer\\3'#whites
@@ -69,6 +70,13 @@ cables <-  net_arcgisread(args[3], precision=precision)[[1]]
 closures <- net_arcgisread(args[4], precision=precision)[[1]]
 boundaries <- net_arcgisread(args[5], precision=precision)[[1]]
 greys <-  net_arcgisread(args[2], precision=precision)[[1]]
+
+
+
+olts <- boundaries$name[boundaries$level_ == 1]
+for (i in seq(length(olts))){
+  if (!(olts[i] %in% closures$label)){
+    boundaries <- boundaries[boundaries$name !=olts[i],]}}
 
 hazel <- as.logical(args[7])
 # hparam <- as.integer(args[7])
@@ -89,7 +97,9 @@ cables <- cables[!duplicated(cables$ref),]
 boundaries <- valid_boundaries(boundaries[!is_empty(boundaries),])
 
 closures_fas <- closures
+closures_fas$enc_type <- as.character(closures_fas$enc_type)
 cables_fas <- cables
+cables_fas$cab_size <- as.character(cables_fas$cab_size)
 boundaries_fas <- boundaries
 
 closures <- mutate(closures, label_2yn = case_when(!is.na(label_2) & label_2 != "" & label_2 != " " & sp2_type %in% c(1,2,4) ~ TRUE,
@@ -265,11 +275,13 @@ if(length(pickup)>0){
   bg <- bg[sapply(bg,nrow)>0]
   ####end20230816
   bpickup <- imap(bg,\(x, idx) filter( boundaries_fas, name %in% x$name)  %>% st_combine() %>% (\(x) st_buffer(x,1.5))() %>% st_sfc() %>% (\(x) st_as_sf(x, crs=st_crs( boundaries_fas)))() %>% mutate(name = paste0('OLT(other map)',idx), level_='1')) %>% bind_rows()
-  dpickup <- st_as_sf(data.frame(label=paste0('OLT(other map)',1:length(pickup)), enc_type='0', geom=rep(st_sfc(st_point(c(0,0))),length(pickup))), crs=st_crs(closures_fas))
+  dpickup <- st_as_sf(data.frame(label=paste0('OLT(other map)',1:length(pickup)),
+                                 enc_type="0"
+                                 , geom=rep(st_sfc(st_point(c(0,0))),length(pickup))), crs=st_crs(closures_fas))
   #  cpickup <- st_as_sf(data.frame(ref1=paste0('OLT',1:length(pickup)), ref2=pickup, ref='')), geom=(st_sfc(st_linestring(c(rep(st_point(c(0,0)),length(pickup)), closures_fas[closures_fas$label==pickup]$geom))))),crs=st_crs(cables_fas))
   cpickup <- st_as_sf(data.frame(ref1=paste0('OLT(other map)',1:length(pickup)),
                                  ref2=pickup,
-                                 cab_size=rep('6',length(pickup)),
+                                 cab_size=rep("6",length(pickup)),
                                  geom=st_sfc(mapply((\(x,y) st_sfc(st_linestring(c(st_point(st_coordinates(x)),st_point(st_coordinates(y)))))),dpickup$geom, closures_fas[closures_fas$label %in% pickup,]$geom))[1:length(pickup)]), crs=st_crs(cables_fas))
   cpickup$ref <- paste0(cpickup$ref1,'/',cpickup$ref2)
   dpickup <- rename(dpickup, geom=geometry)
@@ -717,6 +729,7 @@ spare_fibres_df <- filter(all_fibres_df, spare)
 
 
 
+
 ###################################
 
 temp_str <- function(name){
@@ -734,7 +747,7 @@ temp_str <- function(name){
 #ok per gli spare fibres
 f_uncut_net <- function(sp_f){
   sp_f <- sp_f  |> group_by(ref1) |> mutate(jkout=1:n(), from=paste0(ref1,'%',fibre, '%out%',reel)) |> ungroup() |> #maybe removable
-    group_by(ref2) |> mutate(jkin=1:n(), to=paste0(ref2, '%',fibre, '%in%',reel))                                   #maybe removable
+    group_by(ref2) |> mutate(jkin=1:n(), to=paste0(ref2, '%',fibre, '%in%',reel)) |> ungroup()                                   #maybe removable
   temp <- tbl_graph(edges=sp_f, directed=TRUE) %>% mutate(bind_rows(lapply(V(.)$name, temp_str)))          #maybe removable(second part)
   V(temp)$inc_reel <- sapply(V(temp),(\(x) E(temp)[.to(x)]$reel[1]))
   V(temp)$out_reel <- sapply(V(temp),(\(x) E(temp)[.from(x)]$reel[1]))
@@ -743,6 +756,9 @@ f_uncut_net <- function(sp_f){
   temp1 <-  filter(temp, from_to=='from') |> as_tibble()
   temp2 <-  filter(temp, from_to=='to') |> as_tibble()
   A <- inner_join(temp1,temp2, join_by(dev==dev, inc_reel==out_reel, inc_fibre==out_fibre),na_matches="never") |> select(name.x, name.y) |> rename(from=name.x, to=name.y)
+  # if(nrow(A)==0){
+  #   return(temp)
+  # }
   tbl_graph(edges=A, directed=TRUE) |>  mutate(pname='') |> graph_join(temp) |> activate(edges) |> mutate(fused='UNCUT') |> activate(nodes)
 }
 
@@ -839,6 +855,7 @@ min_boundary <- function(premise, boundary_layer){
 
 dp$bound <- sapply(dp$geom, (\(x) min_boundary(x,boundary_layer=boundaries_fas)))# |> (\(x) paste0('Premises - ',  x))()
 
+
 drops <- cables_fas |> filter(cab_size=='7')
 connected_ix <- c(unique(unlist(sf::st_is_within_distance(lwgeom::st_startpoint(drops),dp,dist=0.1))),unique(unlist(sf::st_is_within_distance(lwgeom::st_endpoint(drops),dp,dist=0.1))))
 dp$connected <- FALSE
@@ -925,7 +942,8 @@ for (xdev in unique(uprn$bound)){
   from <- V(tot_f)[!is.na(V(tot_f)$dev) & V(tot_f)$dev==xdev & degree(tot_f, mode='out')==0 & degree(tot_f, mode='in')>0]
   to <- V(tot_f)[!is.na(V(tot_f)$dev) & V(tot_f)$dev==xdev & !is.na(V(tot_f)$connected) & V(tot_f)$connected]
   m <- min(length(from),length(to))
-  tot_f <- add_edges(tot_f, c(mapply((\(x,y) c(x,y)), from[1:m],to[1:m])))
+  if (length(to)>0){
+    tot_f <- add_edges(tot_f, c(mapply((\(x,y) c(x,y)), from[1:m],to[1:m])))}
 }
 tot_f <- as_tbl_graph(tot_f)
 
